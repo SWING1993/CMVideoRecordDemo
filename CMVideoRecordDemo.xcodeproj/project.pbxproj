@@ -13,6 +13,7 @@
 		03FEC82D225C2BF5006A6FF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03FEC82C225C2BF5006A6FF1 /* Assets.xcassets */; };
 		03FEC830225C2BF5006A6FF1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03FEC82E225C2BF5006A6FF1 /* LaunchScreen.storyboard */; };
 		03FEC833225C2BF5006A6FF1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 03FEC832225C2BF5006A6FF1 /* main.m */; };
+		03FEC83D225C2F93006A6FF1 /* CMVideoRecordView.m in Sources */ = {isa = PBXBuildFile; fileRef = 03FEC83C225C2F93006A6FF1 /* CMVideoRecordView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,8 @@
 		03FEC82F225C2BF5006A6FF1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		03FEC831225C2BF5006A6FF1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		03FEC832225C2BF5006A6FF1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		03FEC83B225C2F93006A6FF1 /* CMVideoRecordView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CMVideoRecordView.h; sourceTree = "<group>"; };
+		03FEC83C225C2F93006A6FF1 /* CMVideoRecordView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CMVideoRecordView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +61,7 @@
 		03FEC822225C2BF3006A6FF1 /* CMVideoRecordDemo */ = {
 			isa = PBXGroup;
 			children = (
+				03FEC83A225C2F7E006A6FF1 /* CMVideoRecord */,
 				03FEC823225C2BF3006A6FF1 /* AppDelegate.h */,
 				03FEC824225C2BF3006A6FF1 /* AppDelegate.m */,
 				03FEC826225C2BF3006A6FF1 /* ViewController.h */,
@@ -69,6 +73,15 @@
 				03FEC832225C2BF5006A6FF1 /* main.m */,
 			);
 			path = CMVideoRecordDemo;
+			sourceTree = "<group>";
+		};
+		03FEC83A225C2F7E006A6FF1 /* CMVideoRecord */ = {
+			isa = PBXGroup;
+			children = (
+				03FEC83B225C2F93006A6FF1 /* CMVideoRecordView.h */,
+				03FEC83C225C2F93006A6FF1 /* CMVideoRecordView.m */,
+			);
+			path = CMVideoRecord;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -144,6 +157,7 @@
 				03FEC828225C2BF3006A6FF1 /* ViewController.m in Sources */,
 				03FEC833225C2BF5006A6FF1 /* main.m in Sources */,
 				03FEC825225C2BF3006A6FF1 /* AppDelegate.m in Sources */,
+				03FEC83D225C2F93006A6FF1 /* CMVideoRecordView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
