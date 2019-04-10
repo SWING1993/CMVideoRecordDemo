@@ -67,8 +67,10 @@
 
 - (void)tapScreen:(UITapGestureRecognizer *)tapGesture {
     CGPoint point= [tapGesture locationInView:self.contentView];
-    [self setFocusCursorWithPoint:point];
-    [self.recorderManager setFoucusWithPoint:point];
+    if (150 < point.y && point.y < self.view.frame.size.height - 200) {
+        [self setFocusCursorWithPoint:point];
+        [self.recorderManager setFoucusWithPoint:point];
+    }
 }
 
 -(void)setFocusCursorWithPoint:(CGPoint)point {
