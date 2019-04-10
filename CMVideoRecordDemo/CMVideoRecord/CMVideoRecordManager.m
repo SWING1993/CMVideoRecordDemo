@@ -82,11 +82,8 @@ static const CGFloat KMaxRecordTime = 10;    //最大录制时间
 - (AVCaptureDeviceInput *)mediaDeviceInput {
     if (!_mediaDeviceInput) {
         __block AVCaptureDevice *backCamera  = nil;
-        AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
-                                                                                                                                mediaType:AVMediaTypeVideo
-                                                                                                                                 position:AVCaptureDevicePositionBack];
-        NSArray *captureDevices = [captureDeviceDiscoverySession devices];
-        [captureDevices enumerateObjectsUsingBlock:^(AVCaptureDevice *camera, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSArray *cameras = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+        [cameras enumerateObjectsUsingBlock:^(AVCaptureDevice *camera, NSUInteger idx, BOOL * _Nonnull stop) {
             if (camera.position == AVCaptureDevicePositionBack) {
                 backCamera = camera;
             }
@@ -194,12 +191,9 @@ static const CGFloat KMaxRecordTime = 10;    //最大录制时间
     AVCaptureDevicePosition currentPosition = [currentDevice position];
     BOOL isUnspecifiedOrFront = (currentPosition == AVCaptureDevicePositionUnspecified || currentPosition ==AVCaptureDevicePositionFront );
     AVCaptureDevicePosition swithToPosition = isUnspecifiedOrFront ? AVCaptureDevicePositionBack:AVCaptureDevicePositionFront;
-    AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera]
-                                                                                                                            mediaType:AVMediaTypeVideo
-                                                                                                                             position:AVCaptureDevicePositionBack];
-    NSArray *captureDevices = [captureDeviceDiscoverySession devices];
+    NSArray *cameras = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
     __block AVCaptureDevice *swithCameraDevice = nil;
-    [captureDevices enumerateObjectsUsingBlock:^(AVCaptureDevice *camera, NSUInteger idx, BOOL * _Nonnull stop) {
+    [cameras enumerateObjectsUsingBlock:^(AVCaptureDevice *camera, NSUInteger idx, BOOL * _Nonnull stop) {
         if (camera.position == swithToPosition){
             swithCameraDevice = camera;
             *stop = YES;
