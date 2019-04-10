@@ -7,8 +7,11 @@
 //
 
 #import "ViewController.h"
+#import "CMVideoRecord/CMVideoRecordView.h"
 
 @interface ViewController ()
+
+@property (nonatomic, strong) CMVideoRecordView *recordView;
 
 @end
 
@@ -26,8 +29,14 @@
 }
 
 - (void)videoRecordAction {
-    
+    self.recordView = [[CMVideoRecordView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    self.recordView.cancelBlock = ^{
+        NSLog(@"CMVideoRecordView 取消录制");
+    };
+    self.recordView.completionBlock = ^(NSURL *fileUrl) {
+        NSLog(@"CMVideoRecordView 完成录制：%@",fileUrl);
+    };
+    [self.recordView present];
 }
-
 
 @end

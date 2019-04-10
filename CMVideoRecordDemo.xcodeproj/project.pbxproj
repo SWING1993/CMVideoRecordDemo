@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0375A786225D7DFB009F3D50 /* CMVideoRecordProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0375A785225D7DFB009F3D50 /* CMVideoRecordProgressView.m */; };
+		0375A789225D7EE5009F3D50 /* CMVideoRecordPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 0375A788225D7EE5009F3D50 /* CMVideoRecordPlayer.m */; };
+		0375A78C225D80EA009F3D50 /* CMVideoRecordManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0375A78B225D80EA009F3D50 /* CMVideoRecordManager.m */; };
+		0375A793225D86CA009F3D50 /* record_video_back@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0375A78E225D86CA009F3D50 /* record_video_back@2x.png */; };
+		0375A794225D86CA009F3D50 /* record_video_confirm@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0375A78F225D86CA009F3D50 /* record_video_confirm@2x.png */; };
+		0375A795225D86CA009F3D50 /* record_video_camera@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0375A790225D86CA009F3D50 /* record_video_camera@2x.png */; };
+		0375A796225D86CA009F3D50 /* record_video_cancel@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0375A791225D86CA009F3D50 /* record_video_cancel@2x.png */; };
+		0375A797225D86CA009F3D50 /* record_video_focus@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0375A792225D86CA009F3D50 /* record_video_focus@2x.png */; };
 		03FEC825225C2BF3006A6FF1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 03FEC824225C2BF3006A6FF1 /* AppDelegate.m */; };
 		03FEC828225C2BF3006A6FF1 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 03FEC827225C2BF3006A6FF1 /* ViewController.m */; };
 		03FEC82B225C2BF3006A6FF1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 03FEC829225C2BF3006A6FF1 /* Main.storyboard */; };
@@ -17,6 +25,17 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0375A784225D7DFB009F3D50 /* CMVideoRecordProgressView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CMVideoRecordProgressView.h; sourceTree = "<group>"; };
+		0375A785225D7DFB009F3D50 /* CMVideoRecordProgressView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CMVideoRecordProgressView.m; sourceTree = "<group>"; };
+		0375A787225D7EE5009F3D50 /* CMVideoRecordPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CMVideoRecordPlayer.h; sourceTree = "<group>"; };
+		0375A788225D7EE5009F3D50 /* CMVideoRecordPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CMVideoRecordPlayer.m; sourceTree = "<group>"; };
+		0375A78A225D80EA009F3D50 /* CMVideoRecordManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CMVideoRecordManager.h; sourceTree = "<group>"; };
+		0375A78B225D80EA009F3D50 /* CMVideoRecordManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CMVideoRecordManager.m; sourceTree = "<group>"; };
+		0375A78E225D86CA009F3D50 /* record_video_back@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_video_back@2x.png"; sourceTree = "<group>"; };
+		0375A78F225D86CA009F3D50 /* record_video_confirm@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_video_confirm@2x.png"; sourceTree = "<group>"; };
+		0375A790225D86CA009F3D50 /* record_video_camera@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_video_camera@2x.png"; sourceTree = "<group>"; };
+		0375A791225D86CA009F3D50 /* record_video_cancel@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_video_cancel@2x.png"; sourceTree = "<group>"; };
+		0375A792225D86CA009F3D50 /* record_video_focus@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "record_video_focus@2x.png"; sourceTree = "<group>"; };
 		03FEC820225C2BF3006A6FF1 /* CMVideoRecordDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CMVideoRecordDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		03FEC823225C2BF3006A6FF1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		03FEC824225C2BF3006A6FF1 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -42,6 +61,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0375A78D225D86CA009F3D50 /* image */ = {
+			isa = PBXGroup;
+			children = (
+				0375A78E225D86CA009F3D50 /* record_video_back@2x.png */,
+				0375A78F225D86CA009F3D50 /* record_video_confirm@2x.png */,
+				0375A790225D86CA009F3D50 /* record_video_camera@2x.png */,
+				0375A791225D86CA009F3D50 /* record_video_cancel@2x.png */,
+				0375A792225D86CA009F3D50 /* record_video_focus@2x.png */,
+			);
+			path = image;
+			sourceTree = "<group>";
+		};
 		03FEC817225C2BF3006A6FF1 = {
 			isa = PBXGroup;
 			children = (
@@ -80,6 +111,13 @@
 			children = (
 				03FEC83B225C2F93006A6FF1 /* CMVideoRecordView.h */,
 				03FEC83C225C2F93006A6FF1 /* CMVideoRecordView.m */,
+				0375A784225D7DFB009F3D50 /* CMVideoRecordProgressView.h */,
+				0375A785225D7DFB009F3D50 /* CMVideoRecordProgressView.m */,
+				0375A787225D7EE5009F3D50 /* CMVideoRecordPlayer.h */,
+				0375A788225D7EE5009F3D50 /* CMVideoRecordPlayer.m */,
+				0375A78A225D80EA009F3D50 /* CMVideoRecordManager.h */,
+				0375A78B225D80EA009F3D50 /* CMVideoRecordManager.m */,
+				0375A78D225D86CA009F3D50 /* image */,
 			);
 			path = CMVideoRecord;
 			sourceTree = "<group>";
@@ -141,8 +179,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0375A795225D86CA009F3D50 /* record_video_camera@2x.png in Resources */,
 				03FEC830225C2BF5006A6FF1 /* LaunchScreen.storyboard in Resources */,
+				0375A797225D86CA009F3D50 /* record_video_focus@2x.png in Resources */,
 				03FEC82D225C2BF5006A6FF1 /* Assets.xcassets in Resources */,
+				0375A794225D86CA009F3D50 /* record_video_confirm@2x.png in Resources */,
+				0375A793225D86CA009F3D50 /* record_video_back@2x.png in Resources */,
+				0375A796225D86CA009F3D50 /* record_video_cancel@2x.png in Resources */,
 				03FEC82B225C2BF3006A6FF1 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -155,9 +198,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				03FEC828225C2BF3006A6FF1 /* ViewController.m in Sources */,
+				0375A786225D7DFB009F3D50 /* CMVideoRecordProgressView.m in Sources */,
 				03FEC833225C2BF5006A6FF1 /* main.m in Sources */,
 				03FEC825225C2BF3006A6FF1 /* AppDelegate.m in Sources */,
 				03FEC83D225C2F93006A6FF1 /* CMVideoRecordView.m in Sources */,
+				0375A789225D7EE5009F3D50 /* CMVideoRecordPlayer.m in Sources */,
+				0375A78C225D80EA009F3D50 /* CMVideoRecordManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
