@@ -147,7 +147,7 @@ static const CGFloat KMaxRecordTime = 10;    //最大录制时间
     [self.timer fire];
 }
 
-- (void)stopTimer{
+- (void)stopTimer {
     [self.timer invalidate];
     self.timer = nil;
 }

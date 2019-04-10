@@ -35,6 +35,10 @@
     [self initSubViews];
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+}
+
 #pragma mark - 初始化视图
 - (void)initSubViews {
     _contentView = [[UIView alloc] initWithFrame:self.view.bounds];
@@ -214,7 +218,7 @@
 #pragma mark - 录制结束循环播放视频
 - (void)showVedio:(NSURL *)playUrl {
     CMVideoRecordPlayer *playView= [[CMVideoRecordPlayer alloc] initWithFrame:self.view.bounds];
-    playView.backgroundColor = [UIColor clearColor];
+    playView.backgroundColor = [UIColor blackColor];
     [_contentView addSubview:playView];
     playView.playUrl = playUrl;
     __weak typeof(self) weakSelf = self;
