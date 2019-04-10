@@ -198,6 +198,18 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
     self.mediaDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:swithToDevice error:nil];
     [_captureSession addInput:_mediaDeviceInput];
     [_captureSession commitConfiguration];
+    
+    for (AVCaptureVideoDataOutput* output in self.captureSession.outputs) {
+        for (AVCaptureConnection* connection in output.connections) {
+            //判断是否是前置摄像头状态
+            if (swithToDevice.position == AVCaptureDevicePositionFront) {
+                if (connection.supportsVideoMirroring) {
+                    //镜像设置
+                    connection.videoMirrored = YES;
+                }
+            }
+        }
+    }
 }
 
 #pragma mark 获取切换时的摄像头
@@ -238,7 +250,7 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
         return;
     }
     if ([self.captureConnection isVideoOrientationSupported]) {
-        self.captureConnection.videoOrientation =[self.preViewLayer connection].videoOrientation;
+        self.captureConnection.videoOrientation = [self.preViewLayer connection].videoOrientation;
     }
     [_movieFileOutput startRecordingToOutputFileURL:outPutFile recordingDelegate:self];
 }
@@ -257,7 +269,7 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
     [self focusWithMode:AVCaptureFocusModeContinuousAutoFocus exposureMode:AVCaptureExposureModeContinuousAutoExposure atPoint:cameraPoint];
 }
 
--(void)focusWithMode:(AVCaptureFocusMode)focusMode
+- (void)focusWithMode:(AVCaptureFocusMode)focusMode
         exposureMode:(AVCaptureExposureMode)exposureMode
              atPoint:(CGPoint)point {
     [self changeDeviceProperty:^(AVCaptureDevice *captureDevice) {
@@ -381,7 +393,10 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
 - (void)captureOutput:(AVCapturePhotoOutput *)captureOutput didFinishProcessingPhotoSampleBuffer:(nullable CMSampleBufferRef)photoSampleBuffer previewPhotoSampleBuffer:(nullable CMSampleBufferRef)previewPhotoSampleBuffer resolvedSettings:(AVCaptureResolvedPhotoSettings *)resolvedSettings bracketSettings:(nullable AVCaptureBracketedStillImageSettings *)bracketSettings error:(nullable NSError *)error {
     NSData *data = [AVCapturePhotoOutput JPEGPhotoDataRepresentationForJPEGSampleBuffer:photoSampleBuffer previewPhotoSampleBuffer:previewPhotoSampleBuffer];
     UIImage *image = [UIImage imageWithData:data];
-    
+    AVCaptureDevice *device = [self switchCameraDevice];
+    if (device && device.position == AVCaptureDevicePositionBack) {
+        image = [UIImage imageWithCGImage:image.CGImage scale:image.scale orientation:UIImageOrientationLeftMirrored];
+    }
     if (self.delegate && [self.delegate respondsToSelector:@selector(takePhotoCompletedWithImage:error:)]) {
         [self.delegate takePhotoCompletedWithImage:image error:error];
     }
@@ -390,6 +405,10 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
 
 - (void)captureOutput:(AVCapturePhotoOutput *)output didFinishProcessingPhoto:(AVCapturePhoto *)photo error:(NSError *)error {
     UIImage * image = [UIImage imageWithData:[photo fileDataRepresentation]];
+    AVCaptureDevice *device = [self switchCameraDevice];
+    if (device && device.position == AVCaptureDevicePositionBack) {
+        image = [UIImage imageWithCGImage:image.CGImage scale:image.scale orientation:UIImageOrientationLeftMirrored];
+    }
     if (self.delegate && [self.delegate respondsToSelector:@selector(takePhotoCompletedWithImage:error:)]) {
         [self.delegate takePhotoCompletedWithImage:image error:error];
     }
