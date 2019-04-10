@@ -13,12 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
 typedef void(^CMVideoRecordViewDismissBlock)(void);
 typedef void(^CMVideoRecordViewCompletionBlock)(NSURL *fileUrl);
 
-@interface CMVideoRecordView : UIWindow
+@interface CMVideoRecordView : UIViewController
 
 @property (nonatomic, copy) CMVideoRecordViewDismissBlock cancelBlock;
 @property (nonatomic, copy) CMVideoRecordViewCompletionBlock completionBlock;
-
-- (void)present;
 
 @end
 

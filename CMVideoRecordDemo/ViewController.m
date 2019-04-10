@@ -11,8 +11,6 @@
 
 @interface ViewController ()
 
-@property (nonatomic, strong) CMVideoRecordView *recordView;
-
 @end
 
 @implementation ViewController
@@ -29,14 +27,14 @@
 }
 
 - (void)videoRecordAction {
-    self.recordView = [[CMVideoRecordView alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    self.recordView.cancelBlock = ^{
-        NSLog(@"CMVideoRecordView 取消录制");
-    };
-    self.recordView.completionBlock = ^(NSURL *fileUrl) {
-        NSLog(@"CMVideoRecordView 完成录制：%@",fileUrl);
-    };
-    [self.recordView present];
+    CMVideoRecordView *controller = [[CMVideoRecordView alloc] init];
+        controller.cancelBlock = ^{
+            NSLog(@"CMVideoRecordView 取消录制");
+        };
+        controller.completionBlock = ^(NSURL *fileUrl) {
+            NSLog(@"CMVideoRecordView 完成录制：%@",fileUrl);
+        };
+    [self presentViewController:controller animated:true completion:NULL];
 }
 
 @end

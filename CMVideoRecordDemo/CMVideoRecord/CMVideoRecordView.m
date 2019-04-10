@@ -13,7 +13,6 @@
 
 @interface CMVideoRecordView ()<CMVideoRecordDelegate>
 
-@property (nonatomic, weak) UIWindow *originKeyWindow;
 @property (nonatomic, strong) CMVideoRecordManager *recorderManager;
 @property (nonatomic, strong) UIView *recordBtn;
 @property (nonatomic, strong) UIView *recordBackView;
@@ -31,28 +30,19 @@
 
 @implementation CMVideoRecordView
 
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        self.backgroundColor = [UIColor blackColor];
-        frame.origin.y = frame.size.height;
-        self.frame = frame;
-        self.windowLevel = UIWindowLevelStatusBar + 1;
-        [self initSubViews];
-        self.originKeyWindow = [[UIApplication sharedApplication].delegate window];
-        [self makeKeyAndVisible];
-    }
-    return self;
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self initSubViews];
 }
 
 #pragma mark - 初始化视图
 - (void)initSubViews {
-    _contentView = [[UIView alloc] initWithFrame:self.bounds];
-    [self addSubview:_contentView];
-    _recorderManager = [[CMVideoRecordManager alloc]init];
+    _contentView = [[UIView alloc] initWithFrame:self.view.bounds];
+    [self.view addSubview:_contentView];
+    _recorderManager = [[CMVideoRecordManager alloc] init];
     _recorderManager.delegate = self;
     [_contentView.layer addSublayer:self.recorderManager.preViewLayer];
-    _recorderManager.preViewLayer.frame = self.bounds;
+    _recorderManager.preViewLayer.frame = self.view.bounds;
     [_contentView addSubview:self.recordBackView];
     [_contentView addSubview:self.backButton];
     [_contentView addSubview:self.tipLabel];
@@ -83,7 +73,7 @@
     [UIView animateWithDuration:0.2 animations:^{
         self.focusImageView.alpha = 1;
         self.focusImageView.transform = CGAffineTransformMakeScale(1, 1);
-    }completion:^(BOOL finished) {
+    } completion:^(BOOL finished) {
         [self performSelector:@selector(autoHideFocusImageView) withObject:nil afterDelay:1];
     }];
 }
@@ -92,9 +82,9 @@
     self.focusImageView.alpha = 0;
 }
 
--(void)layoutSubviews {
-    [super layoutSubviews];
-    _recorderManager.preViewLayer.frame = self.bounds;
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+    _recorderManager.preViewLayer.frame = self.view.bounds;
 }
 
 - (UIImageView *)focusImageView {
@@ -127,7 +117,7 @@
     if (!_switchCameraButton) {
         _switchCameraButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [_switchCameraButton setImage:[UIImage imageNamed:@"record_video_camera"] forState:UIControlStateNormal];
-        _switchCameraButton.frame = CGRectMake(self.frame.size.width - 20 - 28, 20, 30, 28);
+        _switchCameraButton.frame = CGRectMake(self.view.frame.size.width - 20 - 28, 40, 30, 28);
         [_switchCameraButton addTarget:self action:@selector(clickSwitchCamera) forControlEvents:UIControlEventTouchUpInside];
     }
     return _switchCameraButton;
@@ -149,7 +139,7 @@
 
 - (UILabel *)tipLabel {
     if (!_tipLabel) {
-        _tipLabel = [[UILabel alloc]initWithFrame:CGRectMake((self.frame.size.width - 50)/2, self.recordBackView.frame.origin.y - 30, 100, 20)];
+        _tipLabel = [[UILabel alloc]initWithFrame:CGRectMake((self.view.frame.size.width - 50)/2, self.recordBackView.frame.origin.y - 30, 100, 20)];
         _tipLabel.textColor = [UIColor whiteColor];
         _tipLabel.text = @"长按拍摄";
         _tipLabel.font = [UIFont systemFontOfSize:12];
@@ -162,7 +152,7 @@
         _recordBtn = [[UIView alloc]init];
         CGFloat deta = [UIScreen mainScreen].bounds.size.width/375;
         CGFloat width = 60.0*deta;
-        _recordBtn.frame = CGRectMake((self.frame.size.width - width)/2, self.frame.size.height - 107*deta, width, width);
+        _recordBtn.frame = CGRectMake((self.view.frame.size.width - width)/2, self.view.frame.size.height - 107*deta, width, width);
         [_recordBtn.layer setCornerRadius:_recordBtn.frame.size.width/2];
         _recordBtn.backgroundColor = [UIColor whiteColor];
         UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(startRecord:)];
@@ -178,7 +168,10 @@
 }
 
 - (void)clickBackButton {
-    [self dismiss:YES];
+    if (self.cancelBlock) {
+        self.cancelBlock();
+    }
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 #pragma mark - 开始录制
@@ -218,54 +211,25 @@
     [self.recorderManager stopCurrentVideoRecording];
 }
 
-
-#pragma mark - 弹出视图
-- (void)present {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        CGRect rect = self.frame;
-        rect.origin.y = 0;
-        [UIView animateWithDuration:0.25 animations:^{
-            self.frame = rect;
-        }];
-    });
-}
-
-#pragma mark - 收起视图
-- (void)dismiss:(BOOL)cancel {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        CGRect rect = self.frame;
-        rect.origin.y = self.frame.size.height;
-        [UIView animateWithDuration:0.25 animations:^{
-            self.frame = rect;
-        } completion:^(BOOL finished) {
-            [self.originKeyWindow makeKeyAndVisible];
-            [self removeFromSuperview];
-            if (self.cancelBlock && cancel) {
-                self.cancelBlock();
-            }
-        }];
-    });
-}
-
 #pragma mark - 录制结束循环播放视频
 - (void)showVedio:(NSURL *)playUrl {
-    CMVideoRecordPlayer *playView= [[CMVideoRecordPlayer alloc]initWithFrame:self.bounds];
+    CMVideoRecordPlayer *playView= [[CMVideoRecordPlayer alloc] initWithFrame:self.view.bounds];
     playView.backgroundColor = [UIColor clearColor];
     [_contentView addSubview:playView];
     playView.playUrl = playUrl;
-    __weak typeof(self) instance = self;
+    __weak typeof(self) weakSelf = self;
     playView.cancelBlock = ^{
-        [instance clickCancel];
+        [weakSelf clickCancel];
     };
     playView.confirmBlock = ^{
-        if (!instance.videoCompressComplete) {
+        if (!weakSelf.videoCompressComplete) {
             return ;
         }
-        [instance saveVideo];
-        if (instance.completionBlock && instance.recordVideoOutPutUrl) {
-            instance.completionBlock(instance.recordVideoOutPutUrl);
+        [weakSelf saveVideo];
+        if (weakSelf.completionBlock && weakSelf.recordVideoOutPutUrl) {
+            weakSelf.completionBlock(weakSelf.recordVideoOutPutUrl);
         }
-        [instance dismiss:NO];
+        [weakSelf dismissViewControllerAnimated:YES completion:NULL];
     };
 }
 

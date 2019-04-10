@@ -87,7 +87,7 @@ static const CGFloat KMaxRecordTime = 10;    //最大录制时间
                                                                                                                                  position:AVCaptureDevicePositionBack];
         NSArray *captureDevices = [captureDeviceDiscoverySession devices];
         [captureDevices enumerateObjectsUsingBlock:^(AVCaptureDevice *camera, NSUInteger idx, BOOL * _Nonnull stop) {
-            if(camera.position == AVCaptureDevicePositionBack){
+            if (camera.position == AVCaptureDevicePositionBack) {
                 backCamera = camera;
             }
         }];
