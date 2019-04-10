@@ -88,9 +88,14 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
 - (AVCaptureDeviceInput *)mediaDeviceInput {
     if (!_mediaDeviceInput) {
         __block AVCaptureDevice *backCamera  = nil;
-//        NSArray *cameras = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-        AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
-        NSArray *cameras = [captureDeviceDiscoverySession devices];
+        
+        NSArray *cameras;
+        if (([[UIDevice currentDevice].systemVersion doubleValue] < 10.0)) {
+            cameras = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+        } else {
+            AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
+            cameras = [captureDeviceDiscoverySession devices];
+        }
         [cameras enumerateObjectsUsingBlock:^(AVCaptureDevice *camera, NSUInteger idx, BOOL * _Nonnull stop) {
             if (camera.position == AVCaptureDevicePositionBack) {
                 backCamera = camera;
@@ -201,9 +206,13 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
     AVCaptureDevicePosition currentPosition = [currentDevice position];
     BOOL isUnspecifiedOrFront = (currentPosition == AVCaptureDevicePositionUnspecified || currentPosition ==AVCaptureDevicePositionFront );
     AVCaptureDevicePosition swithToPosition = isUnspecifiedOrFront ? AVCaptureDevicePositionBack:AVCaptureDevicePositionFront;
-//    NSArray *cameras = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-    AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera] mediaType:AVMediaTypeVideo position:swithToPosition];
-    NSArray *cameras = [captureDeviceDiscoverySession devices];
+    NSArray *cameras;
+    if ([[UIDevice currentDevice].systemVersion doubleValue] < 10.0) {
+        cameras = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    } else {
+        AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera] mediaType:AVMediaTypeVideo position:swithToPosition];
+        cameras = [captureDeviceDiscoverySession devices];
+    }
     __block AVCaptureDevice *swithCameraDevice = nil;
     [cameras enumerateObjectsUsingBlock:^(AVCaptureDevice *camera, NSUInteger idx, BOOL * _Nonnull stop) {
         if (camera.position == swithToPosition) {
@@ -373,6 +382,15 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
     NSData *data = [AVCapturePhotoOutput JPEGPhotoDataRepresentationForJPEGSampleBuffer:photoSampleBuffer previewPhotoSampleBuffer:previewPhotoSampleBuffer];
     UIImage *image = [UIImage imageWithData:data];
     
+    if (self.delegate && [self.delegate respondsToSelector:@selector(takePhotoCompletedWithImage:error:)]) {
+        [self.delegate takePhotoCompletedWithImage:image error:error];
+    }
+    [self.captureSession stopRunning];
+}
+
+- (void)captureOutput:(AVCapturePhotoOutput *)output didFinishProcessingPhoto:(AVCapturePhoto *)photo error:(NSError *)error {
+    CGImageRef cgImage = [photo CGImageRepresentation];
+    UIImage * image = [UIImage imageWithCGImage:cgImage];
     if (self.delegate && [self.delegate respondsToSelector:@selector(takePhotoCompletedWithImage:error:)]) {
         [self.delegate takePhotoCompletedWithImage:image error:error];
     }

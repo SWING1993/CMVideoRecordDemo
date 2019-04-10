@@ -204,11 +204,11 @@
         self.switchCameraButton.hidden = YES;
         NSURL *url = [NSURL fileURLWithPath:[CMVideoRecordManager cacheFilePath:YES]];
         [self.recorderManager startRecordToFile:url];
-    } else if(gesture.state >= UIGestureRecognizerStateEnded){
+    } else if(gesture.state >= UIGestureRecognizerStateEnded) {
         [self stopRecord];
-    } else if(gesture.state >= UIGestureRecognizerStateCancelled){
+    } else if(gesture.state >= UIGestureRecognizerStateCancelled) {
         [self stopRecord];
-    } else if(gesture.state >= UIGestureRecognizerStateFailed){
+    } else if(gesture.state >= UIGestureRecognizerStateFailed) {
         [self stopRecord];
     }
 }
