@@ -40,8 +40,8 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
         self.captureSession = [[AVCaptureSession alloc] init];
         self.movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
         self.imageOutput = [[AVCapturePhotoOutput alloc] init];
-        AVCapturePhotoSettings *outputSettings = [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey:AVVideoCodecTypeJPEG}];
-        [self.imageOutput setPhotoSettingsForSceneMonitoring:outputSettings];
+        AVCapturePhotoSettings *imageOutputSettings = [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey:AVVideoCodecTypeJPEG}];
+        [self.imageOutput setPhotoSettingsForSceneMonitoring:imageOutputSettings];
         //后台播放音频时需要注意加以下代码，否则会获取音频设备失败
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
         [[AVAudioSession sharedInstance] setMode:AVAudioSessionModeVideoRecording error:nil];
@@ -199,14 +199,14 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
     [_captureSession addInput:_mediaDeviceInput];
     [_captureSession commitConfiguration];
     
+    //判断是否是前置摄像头状态
+    if (swithToDevice.position == AVCaptureDevicePositionFront) {
+    }
     for (AVCaptureVideoDataOutput* output in self.captureSession.outputs) {
         for (AVCaptureConnection* connection in output.connections) {
-            //判断是否是前置摄像头状态
-            if (swithToDevice.position == AVCaptureDevicePositionFront) {
-                if (connection.supportsVideoMirroring) {
-                    //镜像设置
-                    connection.videoMirrored = YES;
-                }
+            if (connection.supportsVideoMirroring) {
+                //镜像设置
+                connection.videoMirrored = YES;
             }
         }
     }
@@ -236,9 +236,8 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
 }
 
 - (void)takePhoto {
-    NSDictionary *setDic = @{AVVideoCodecKey:AVVideoCodecTypeJPEG};
-    AVCapturePhotoSettings *outputSettings = [AVCapturePhotoSettings photoSettingsWithFormat:setDic];
-    [self.imageOutput capturePhotoWithSettings:outputSettings delegate:self];
+    AVCapturePhotoSettings *imageOutputSettings = [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey:AVVideoCodecTypeJPEG}];
+    [self.imageOutput capturePhotoWithSettings:imageOutputSettings delegate:self];
 }
 
 #pragma mark 开始录制
@@ -349,7 +348,6 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
     CGFloat fileSize = 0;
     if ([fm fileExistsAtPath:filePath]) {
         fileSize = [[fm attributesOfItemAtPath:filePath error:nil] fileSize];
-        NSLog(@"视频大小 - - - - - %fM,--------- %fKB",fileSize / (1024.0 * 1024.0),fileSize / 1024.0);
     }
     return fileSize/1024/1024;
 }
@@ -400,7 +398,6 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
     if (self.delegate && [self.delegate respondsToSelector:@selector(takePhotoCompletedWithImage:error:)]) {
         [self.delegate takePhotoCompletedWithImage:image error:error];
     }
-    [self.captureSession stopRunning];
 }
 
 - (void)captureOutput:(AVCapturePhotoOutput *)output didFinishProcessingPhoto:(AVCapturePhoto *)photo error:(NSError *)error {
@@ -412,7 +409,6 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
     if (self.delegate && [self.delegate respondsToSelector:@selector(takePhotoCompletedWithImage:error:)]) {
         [self.delegate takePhotoCompletedWithImage:image error:error];
     }
-    [self.captureSession stopRunning];
 }
 
 - (void)dealloc {
