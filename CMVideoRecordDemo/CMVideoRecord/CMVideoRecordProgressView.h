@@ -12,8 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CMVideoRecordProgressView : UIView
 
-@property (nonatomic,assign)CGFloat totolProgress;
-@property (nonatomic,assign)CGFloat progress;
+@property (nonatomic, assign)CGFloat totolProgress;
+@property (nonatomic, assign)CGFloat progress;
 
 @end
 

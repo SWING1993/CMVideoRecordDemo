@@ -15,6 +15,7 @@
 @property (nonatomic, strong) AVPlayer *player;
 @property (nonatomic, strong) UIButton *cancelButton;
 @property (nonatomic, strong) UIButton *confirmButton;
+@property (nonatomic, strong) UIImageView *imageView;
 
 @end
 
@@ -34,7 +35,7 @@
     _cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _cancelButton.alpha = 0;
     [_cancelButton setBackgroundImage:[UIImage imageNamed:@"record_video_cancel"] forState:UIControlStateNormal];
-    _cancelButton.frame = CGRectMake((self.frame.size.width - width)/2, self.frame.size.height - 200 * scale, width, width);
+    _cancelButton.frame = CGRectMake((self.frame.size.width - width)/2, self.frame.size.height - 150 * scale, width, width);
     [_cancelButton addTarget:self action:@selector(clickCancel) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:_cancelButton];
    
@@ -99,6 +100,20 @@
 
 - (void)addObserverToPlayerItem:(AVPlayerItem *)playerItem {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackFinished:) name:AVPlayerItemDidPlayToEndTimeNotification object:playerItem];
+}
+
+- (void)setImage:(UIImage *)image {
+    _image = image;
+    if (!_imageView) {
+        _imageView = [[UIImageView alloc] initWithImage:image];
+        _imageView.contentMode = UIViewContentModeScaleAspectFill;
+        _imageView.frame = self.bounds;
+        [self addSubview:_imageView];
+    }
+    if (!_confirmButton) {
+        [self playerButtons];
+    }
+    [self showPlayerButtons];
 }
 
 - (void)dealloc {

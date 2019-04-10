@@ -7,11 +7,12 @@
 //
 
 #import "CMVideoRecordManager.h"
+#import <UIKit/UIKit.h>
 
 static const CGFloat KTimerInterval = 0.02;  //进度条timer
-static const CGFloat KMaxRecordTime = 10;    //最大录制时间
+static const CGFloat KMaxRecordTime = 15;    //最大录制时间
 
-@interface CMVideoRecordManager ()<AVCaptureFileOutputRecordingDelegate>
+@interface CMVideoRecordManager ()<AVCaptureFileOutputRecordingDelegate,AVCapturePhotoCaptureDelegate>
 // 媒体（音、视频）捕获会话
 @property (nonatomic, strong) AVCaptureSession *captureSession;
 // 视频输入
@@ -20,6 +21,8 @@ static const CGFloat KMaxRecordTime = 10;    //最大录制时间
 @property (nonatomic, strong) AVCaptureDeviceInput *audioDeviceInput;
 // 视频文件输出
 @property (nonatomic, strong) AVCaptureMovieFileOutput *movieFileOutput;
+// 输出图片
+@property (nonatomic ,strong) AVCapturePhotoOutput *imageOutput;
 // 输入输出对象连接
 @property (nonatomic, strong) AVCaptureConnection *captureConnection;
 // 定时器
@@ -34,8 +37,11 @@ static const CGFloat KMaxRecordTime = 10;    //最大录制时间
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.captureSession = [[AVCaptureSession alloc]init];
-        self.movieFileOutput = [[AVCaptureMovieFileOutput alloc]init];
+        self.captureSession = [[AVCaptureSession alloc] init];
+        self.movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
+        self.imageOutput = [[AVCapturePhotoOutput alloc] init];
+        AVCapturePhotoSettings *outputSettings = [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey:AVVideoCodecTypeJPEG}];
+        [self.imageOutput setPhotoSettingsForSceneMonitoring:outputSettings];
         //后台播放音频时需要注意加以下代码，否则会获取音频设备失败
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
         [[AVAudioSession sharedInstance] setMode:AVAudioSessionModeVideoRecording error:nil];
@@ -82,7 +88,9 @@ static const CGFloat KMaxRecordTime = 10;    //最大录制时间
 - (AVCaptureDeviceInput *)mediaDeviceInput {
     if (!_mediaDeviceInput) {
         __block AVCaptureDevice *backCamera  = nil;
-        NSArray *cameras = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+//        NSArray *cameras = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+        AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera] mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
+        NSArray *cameras = [captureDeviceDiscoverySession devices];
         [cameras enumerateObjectsUsingBlock:^(AVCaptureDevice *camera, NSUInteger idx, BOOL * _Nonnull stop) {
             if (camera.position == AVCaptureDevicePositionBack) {
                 backCamera = camera;
@@ -163,6 +171,8 @@ static const CGFloat KMaxRecordTime = 10;    //最大录制时间
     // 添加output
     [self.captureSession canAddOutput:self.movieFileOutput] ? [self.captureSession addOutput:self.movieFileOutput] : nil;
     
+    [self.captureSession canAddOutput:self.imageOutput] ? [self.captureSession addOutput:self.imageOutput] : nil;
+    
     [self.captureSession commitConfiguration];
     
     // 防抖功能
@@ -191,15 +201,23 @@ static const CGFloat KMaxRecordTime = 10;    //最大录制时间
     AVCaptureDevicePosition currentPosition = [currentDevice position];
     BOOL isUnspecifiedOrFront = (currentPosition == AVCaptureDevicePositionUnspecified || currentPosition ==AVCaptureDevicePositionFront );
     AVCaptureDevicePosition swithToPosition = isUnspecifiedOrFront ? AVCaptureDevicePositionBack:AVCaptureDevicePositionFront;
-    NSArray *cameras = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+//    NSArray *cameras = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    AVCaptureDeviceDiscoverySession *captureDeviceDiscoverySession = [AVCaptureDeviceDiscoverySession discoverySessionWithDeviceTypes:@[AVCaptureDeviceTypeBuiltInWideAngleCamera] mediaType:AVMediaTypeVideo position:swithToPosition];
+    NSArray *cameras = [captureDeviceDiscoverySession devices];
     __block AVCaptureDevice *swithCameraDevice = nil;
     [cameras enumerateObjectsUsingBlock:^(AVCaptureDevice *camera, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (camera.position == swithToPosition){
+        if (camera.position == swithToPosition) {
             swithCameraDevice = camera;
             *stop = YES;
         };
     }];
     return swithCameraDevice;
+}
+
+- (void)takePhoto {
+    NSDictionary *setDic = @{AVVideoCodecKey:AVVideoCodecTypeJPEG};
+    AVCapturePhotoSettings *outputSettings = [AVCapturePhotoSettings photoSettingsWithFormat:setDic];
+    [self.imageOutput capturePhotoWithSettings:outputSettings delegate:self];
 }
 
 #pragma mark 开始录制
@@ -210,7 +228,7 @@ static const CGFloat KMaxRecordTime = 10;    //最大录制时间
     if ([self.movieFileOutput isRecording]) {
         return;
     }
-    if ([self.captureConnection isVideoOrientationSupported]){
+    if ([self.captureConnection isVideoOrientationSupported]) {
         self.captureConnection.videoOrientation =[self.preViewLayer connection].videoOrientation;
     }
     [_movieFileOutput startRecordingToOutputFileURL:outPutFile recordingDelegate:self];
@@ -252,6 +270,7 @@ static const CGFloat KMaxRecordTime = 10;    //最大录制时间
         }
     }];
 }
+
 #pragma mark - 改变设备属性方法
 - (void)changeDeviceProperty:(void (^)(id obj))propertyChange {
     AVCaptureDevice *captureDevice = [self.mediaDeviceInput device];
@@ -347,6 +366,17 @@ static const CGFloat KMaxRecordTime = 10;    //最大录制时间
         // 存在
         return dir;
     }
+}
+
+#pragma mark AVCapturePhotoCaptureDelegate
+- (void)captureOutput:(AVCapturePhotoOutput *)captureOutput didFinishProcessingPhotoSampleBuffer:(nullable CMSampleBufferRef)photoSampleBuffer previewPhotoSampleBuffer:(nullable CMSampleBufferRef)previewPhotoSampleBuffer resolvedSettings:(AVCaptureResolvedPhotoSettings *)resolvedSettings bracketSettings:(nullable AVCaptureBracketedStillImageSettings *)bracketSettings error:(nullable NSError *)error {
+    NSData *data = [AVCapturePhotoOutput JPEGPhotoDataRepresentationForJPEGSampleBuffer:photoSampleBuffer previewPhotoSampleBuffer:previewPhotoSampleBuffer];
+    UIImage *image = [UIImage imageWithData:data];
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(takePhotoCompletedWithImage:error:)]) {
+        [self.delegate takePhotoCompletedWithImage:image error:error];
+    }
+    [self.captureSession stopRunning];
 }
 
 - (void)dealloc {

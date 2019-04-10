@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol CMVideoRecordDelegate <NSObject>
 
+- (void)takePhotoCompletedWithImage:(UIImage *)image error:(NSError *)error;
+
 // 录制结束
 - (void)captureOutput:(AVCaptureFileOutput *)captureOutput didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL fromConnections:(NSArray *)connections error:(NSError *)error;
 
@@ -27,6 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 // 摄像头视图层
 @property (nonatomic, strong) AVCaptureVideoPreviewLayer *preViewLayer;
+
+// 拍照
+- (void)takePhoto;
 
 // 准备录制
 - (void)prepareForRecord;

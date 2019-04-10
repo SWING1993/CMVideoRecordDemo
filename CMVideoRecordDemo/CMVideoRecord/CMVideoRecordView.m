@@ -145,9 +145,10 @@
 
 - (UILabel *)tipLabel {
     if (!_tipLabel) {
-        _tipLabel = [[UILabel alloc]initWithFrame:CGRectMake((self.view.frame.size.width - 50)/2, self.recordBackView.frame.origin.y - 30, 100, 20)];
+        _tipLabel = [[UILabel alloc]initWithFrame:CGRectMake((self.view.frame.size.width - 180)/2, self.recordBackView.frame.origin.y - 30, 180, 20)];
         _tipLabel.textColor = [UIColor whiteColor];
-        _tipLabel.text = @"长按拍摄";
+        _tipLabel.text = @"轻触拍照,按住摄像";
+        _tipLabel.textAlignment = NSTextAlignmentCenter;
         _tipLabel.font = [UIFont systemFontOfSize:12];
     }
     return _tipLabel;
@@ -161,8 +162,11 @@
         _recordBtn.frame = CGRectMake((self.view.frame.size.width - width)/2, self.view.frame.size.height - 107*deta, width, width);
         [_recordBtn.layer setCornerRadius:_recordBtn.frame.size.width/2];
         _recordBtn.backgroundColor = [UIColor whiteColor];
-        UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(startRecord:)];
+        UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(startRecord:)];
         [_recordBtn addGestureRecognizer:press];
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(takePicture:)];
+        [_recordBtn addGestureRecognizer:tap];
         _recordBtn.userInteractionEnabled = YES;
     }
     return _recordBtn;
@@ -178,6 +182,10 @@
         self.cancelBlock();
     }
     [self dismissViewControllerAnimated:YES completion:NULL];
+}
+
+- (void)takePicture:(UITapGestureRecognizer *)gesture {
+    [self.recorderManager takePhoto];
 }
 
 #pragma mark - 开始录制
@@ -232,8 +240,8 @@
             return ;
         }
         [weakSelf saveVideo];
-        if (weakSelf.completionBlock && weakSelf.recordVideoOutPutUrl) {
-            weakSelf.completionBlock(weakSelf.recordVideoOutPutUrl);
+        if (weakSelf.videoCompletionBlock && weakSelf.recordVideoOutPutUrl) {
+            weakSelf.videoCompletionBlock(weakSelf.recordVideoOutPutUrl);
         }
         [weakSelf dismissViewControllerAnimated:YES completion:NULL];
     };
@@ -247,8 +255,23 @@
     }
 }
 
+
 - (void)video:(NSString *)videoPath didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
     NSLog(@"保存视频完成");
+}
+
+- (void)savePhoto:(UIImage *)image {
+    UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+}
+
+- (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo {
+    NSString *msg = nil;
+    if (error != NULL) {
+        msg = @"保存图片失败" ;
+    } else {
+        msg = @"保存图片成功" ;
+    }
+    NSLog(@"%@", msg);
 }
 
 - (void)compressVideo {
@@ -287,6 +310,24 @@
 - (void)recordTimeCurrentTime:(CGFloat)currentTime totalTime:(CGFloat)totalTime {
     self.progressView.totolProgress = totalTime;
     self.progressView.progress = currentTime;
+}
+
+- (void)takePhotoCompletedWithImage:(UIImage *)image error:(NSError *)error {
+    CMVideoRecordPlayer *playView= [[CMVideoRecordPlayer alloc] initWithFrame:self.view.bounds];
+    playView.backgroundColor = [UIColor blackColor];
+    [_contentView addSubview:playView];
+    playView.image = image;
+    __weak typeof(self) weakSelf = self;
+    playView.cancelBlock = ^{
+        [weakSelf clickCancel];
+    };
+    playView.confirmBlock = ^{
+        [weakSelf savePhoto:image];
+        if (weakSelf.photoCompletionBlock) {
+            weakSelf.photoCompletionBlock(image);
+        }
+        [weakSelf dismissViewControllerAnimated:YES completion:NULL];
+    };
 }
 
 - (void)dealloc {

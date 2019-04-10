@@ -18,6 +18,8 @@ typedef void(^CMVideoRecordPlayerConfirmBlock)(void);
 @property (nonatomic, copy) CMVideoRecordPlayerCancelBlock cancelBlock;
 @property (nonatomic, copy) CMVideoRecordPlayerConfirmBlock confirmBlock;
 @property (nonatomic, strong) NSURL *playUrl;
+@property (nonatomic, strong) UIImage *image;
+
 
 @end
 
