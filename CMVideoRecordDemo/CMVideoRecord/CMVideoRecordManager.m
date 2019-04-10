@@ -389,8 +389,7 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
 }
 
 - (void)captureOutput:(AVCapturePhotoOutput *)output didFinishProcessingPhoto:(AVCapturePhoto *)photo error:(NSError *)error {
-    CGImageRef cgImage = [photo CGImageRepresentation];
-    UIImage * image = [UIImage imageWithCGImage:cgImage];
+    UIImage * image = [UIImage imageWithData:[photo fileDataRepresentation]];
     if (self.delegate && [self.delegate respondsToSelector:@selector(takePhotoCompletedWithImage:error:)]) {
         [self.delegate takePhotoCompletedWithImage:image error:error];
     }
