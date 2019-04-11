@@ -6,6 +6,9 @@
 //  Copyright © 2019 MPM. All rights reserved.
 //
 
+#define NOTIFICATION_RESIGN_ACTIVE              @"appResignActive"
+#define NOTIFICATION_BECOME_ACTIVE              @"appBecomeActive"
+
 #import "CMVideoRecordView.h"
 #import "CMVideoRecordPlayer.h"
 #import "CMVideoRecordManager.h"
@@ -25,6 +28,7 @@
 @property (nonatomic, strong) NSURL *recordVideoUrl;
 @property (nonatomic, strong) NSURL *recordVideoOutPutUrl;
 @property (nonatomic, assign) BOOL videoCompressComplete;
+@property (nonatomic, strong) CMVideoRecordPlayer *playView;
 
 @end
 
@@ -33,10 +37,30 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initSubViews];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(resignActiveToRecordState)
+                                                 name:NOTIFICATION_RESIGN_ACTIVE
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(becomeActiveToRecordState)
+                                                 name:NOTIFICATION_BECOME_ACTIVE
+                                               object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+}
+
+- (void)resignActiveToRecordState {
+    if (self.playView.player) {
+        [self.playView.player pause];
+    }
+}
+
+- (void)becomeActiveToRecordState {
+    if (self.playView.player) {
+        [self.playView.player play];
+    }
 }
 
 #pragma mark - 初始化视图
@@ -73,7 +97,7 @@
     }
 }
 
--(void)setFocusCursorWithPoint:(CGPoint)point {
+- (void)setFocusCursorWithPoint:(CGPoint)point {
     self.focusImageView.center = point;
     self.focusImageView.transform = CGAffineTransformMakeScale(1.5, 1.5);
     [UIView animateWithDuration:0.2 animations:^{
@@ -154,7 +178,7 @@
     return _tipLabel;
 }
 
--(UIView *)recordBtn {
+- (UIView *)recordBtn {
     if (!_recordBtn) {
         _recordBtn = [[UIView alloc] init];
         CGFloat deta = [UIScreen mainScreen].bounds.size.width/375;
@@ -234,6 +258,7 @@
     playView.playUrl = playUrl;
     __weak typeof(self) weakSelf = self;
     playView.cancelBlock = ^{
+        weakSelf.playView = nil;
         [weakSelf clickCancel];
     };
     playView.confirmBlock = ^{
@@ -246,6 +271,7 @@
         }
         [weakSelf dismissViewControllerAnimated:YES completion:NULL];
     };
+    self.playView = playView;
 }
 
 - (void)saveVideo {
@@ -333,6 +359,7 @@
 
 - (void)dealloc {
     NSLog(@"orz   dealloc");
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

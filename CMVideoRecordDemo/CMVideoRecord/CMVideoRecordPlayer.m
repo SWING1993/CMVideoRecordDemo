@@ -7,12 +7,10 @@
 //
 
 #import "CMVideoRecordPlayer.h"
-#import <AVFoundation/AVFoundation.h>
 
 @interface CMVideoRecordPlayer ()
 
 @property (nonatomic, strong) CALayer *playerLayer;
-@property (nonatomic, strong) AVPlayer *player;
 @property (nonatomic, strong) UIButton *cancelButton;
 @property (nonatomic, strong) UIButton *confirmButton;
 @property (nonatomic, strong) UIImageView *imageView;
