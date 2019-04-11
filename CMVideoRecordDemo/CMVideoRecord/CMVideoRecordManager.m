@@ -195,15 +195,16 @@ static const CGFloat KMaxRecordTime = 15;    //最大录制时间
     
     //判断是否是前置摄像头状态
     if (swithToDevice.position == AVCaptureDevicePositionFront) {
-    }
-    for (AVCaptureVideoDataOutput* output in self.captureSession.outputs) {
-        for (AVCaptureConnection* connection in output.connections) {
-            if (connection.supportsVideoMirroring) {
-                //镜像设置
-                connection.videoMirrored = YES;
+        for (AVCaptureVideoDataOutput* output in self.captureSession.outputs) {
+            for (AVCaptureConnection* connection in output.connections) {
+                if (connection.supportsVideoMirroring) {
+                    //镜像设置
+                    connection.videoMirrored = YES;
+                }
             }
         }
     }
+    
 }
 
 #pragma mark 获取切换时的摄像头
