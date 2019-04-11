@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,7 +20,7 @@ typedef void(^CMVideoRecordPlayerConfirmBlock)(void);
 @property (nonatomic, copy) CMVideoRecordPlayerConfirmBlock confirmBlock;
 @property (nonatomic, strong) NSURL *playUrl;
 @property (nonatomic, strong) UIImage *image;
-
+@property (nonatomic, strong) AVPlayer *player;
 
 @end
 

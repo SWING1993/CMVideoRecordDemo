@@ -6,6 +6,9 @@
 //  Copyright © 2019 MPM. All rights reserved.
 //
 
+#define NOTIFICATION_RESIGN_ACTIVE              @"appResignActive"
+#define NOTIFICATION_BECOME_ACTIVE              @"appBecomeActive"
+
 #import "CMVideoRecordView.h"
 #import "CMVideoRecordPlayer.h"
 #import "CMVideoRecordManager.h"
@@ -25,6 +28,7 @@
 @property (nonatomic, strong) NSURL *recordVideoUrl;
 @property (nonatomic, strong) NSURL *recordVideoOutPutUrl;
 @property (nonatomic, assign) BOOL videoCompressComplete;
+@property (nonatomic, strong) CMVideoRecordPlayer *playView;
 
 @end
 
@@ -33,11 +37,32 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initSubViews];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(resignActiveToRecordState)
+                                                 name:NOTIFICATION_RESIGN_ACTIVE
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(becomeActiveToRecordState)
+                                                 name:NOTIFICATION_BECOME_ACTIVE
+                                               object:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 }
+
+- (void)resignActiveToRecordState {
+    if (self.playView.player) {
+        [self.playView.player pause];
+    }
+}
+
+- (void)becomeActiveToRecordState {
+    if (self.playView.player) {
+        [self.playView.player play];
+    }
+}
+
 
 #pragma mark - 初始化视图
 - (void)initSubViews {
@@ -228,12 +253,13 @@
 
 #pragma mark - 录制结束循环播放视频
 - (void)showVedio:(NSURL *)playUrl {
-    CMVideoRecordPlayer *playView= [[CMVideoRecordPlayer alloc] initWithFrame:self.view.bounds];
+    CMVideoRecordPlayer *playView = [[CMVideoRecordPlayer alloc] initWithFrame:self.view.bounds];
     playView.backgroundColor = [UIColor blackColor];
     [_contentView addSubview:playView];
     playView.playUrl = playUrl;
     __weak typeof(self) weakSelf = self;
     playView.cancelBlock = ^{
+        weakSelf.playView = nil;
         [weakSelf clickCancel];
     };
     playView.confirmBlock = ^{
@@ -246,6 +272,7 @@
         }
         [weakSelf dismissViewControllerAnimated:YES completion:NULL];
     };
+    self.playView = playView;
 }
 
 - (void)saveVideo {
@@ -293,6 +320,7 @@
     self.backButton.hidden = NO;
     self.tipLabel.hidden = NO;
     self.switchCameraButton.hidden = NO;
+    self.recordVideoUrl = nil;
 }
 
 #pragma mark - JCVideoRecordManagerDelegate method
@@ -333,6 +361,7 @@
 
 - (void)dealloc {
     NSLog(@"orz   dealloc");
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end
