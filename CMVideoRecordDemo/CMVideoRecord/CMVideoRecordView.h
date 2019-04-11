@@ -16,8 +16,19 @@ typedef void(^CMVideoRecordPhotoCompletionBlock)(UIImage *image);
 
 @interface CMVideoRecordView : UIViewController
 
+/**
+ 取消回调
+ */
 @property (nonatomic, copy) CMVideoRecordDismissBlock cancelBlock;
+
+/**
+ 拍摄视频完成回调
+ */
 @property (nonatomic, copy) CMVideoRecordVideoCompletionBlock videoCompletionBlock;
+
+/**
+ 拍摄图片完成回调
+ */
 @property (nonatomic, copy) CMVideoRecordPhotoCompletionBlock photoCompletionBlock;
 
 @end

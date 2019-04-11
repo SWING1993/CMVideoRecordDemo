@@ -48,7 +48,7 @@
     //设置线条宽度
     CGContextSetLineWidth(ctx, 4);
     //把路径添加到上下文
-    [[UIColor greenColor] setStroke];
+    [[UIColor colorWithRed:43/255 green:162/255 blue:69/255 alpha:1] setStroke];
     //设置描边颜色
     CGContextAddPath(ctx, path.CGPath);
     //渲染

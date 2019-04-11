@@ -156,15 +156,16 @@
 
 -(UIView *)recordBtn {
     if (!_recordBtn) {
-        _recordBtn = [[UIView alloc]init];
+        _recordBtn = [[UIView alloc] init];
         CGFloat deta = [UIScreen mainScreen].bounds.size.width/375;
         CGFloat width = 60.0*deta;
         _recordBtn.frame = CGRectMake((self.view.frame.size.width - width)/2, self.view.frame.size.height - 107*deta, width, width);
         [_recordBtn.layer setCornerRadius:_recordBtn.frame.size.width/2];
         _recordBtn.backgroundColor = [UIColor whiteColor];
+        // 长按时间
         UILongPressGestureRecognizer *press = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(startRecord:)];
         [_recordBtn addGestureRecognizer:press];
-        
+        // 点击事件
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(takePicture:)];
         [_recordBtn addGestureRecognizer:tap];
         _recordBtn.userInteractionEnabled = YES;
