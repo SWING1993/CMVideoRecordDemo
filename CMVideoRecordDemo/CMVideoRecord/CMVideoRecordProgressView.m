@@ -10,14 +10,14 @@
 
 @implementation CMVideoRecordProgressView
 
--(instancetype)init {
+- (instancetype)init {
     if (self = [super init]) {
         self.backgroundColor = [UIColor clearColor];
     }
     return self;
 }
 
--(instancetype)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = [UIColor clearColor];
         self.clipsToBounds = NO;
@@ -25,7 +25,7 @@
     return self;
 }
 
--(instancetype)initWithCoder:(NSCoder *)aDecoder{
+- (instancetype)initWithCoder:(NSCoder *)aDecoder{
     if (self = [super initWithCoder:aDecoder]) {
         self.backgroundColor = [UIColor clearColor];
     }
@@ -48,14 +48,14 @@
     //设置线条宽度
     CGContextSetLineWidth(ctx, 4);
     //把路径添加到上下文
-    [[UIColor colorWithRed:43/255 green:162/255 blue:69/255 alpha:1] setStroke];
+    [[UIColor greenColor] setStroke];
     //设置描边颜色
     CGContextAddPath(ctx, path.CGPath);
     //渲染
     CGContextStrokePath(ctx);
 }
 
--(void)setProgress:(CGFloat)progress {
+- (void)setProgress:(CGFloat)progress {
     _progress = progress;
     [self setNeedsDisplay];
 }
